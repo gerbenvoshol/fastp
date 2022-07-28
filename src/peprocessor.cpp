@@ -418,8 +418,8 @@ bool PairEndProcessor::processPairEnd(ReadPack* leftPack, ReadPack* rightPack, T
         // trim in head and tail, and apply quality cut in sliding window
         int frontTrimmed1 = 0;
         int frontTrimmed2 = 0;
-        Read* r1 = mFilter->trimAndCut(or1, mOptions->trim.front1, mOptions->trim.tail1, frontTrimmed1);
-        Read* r2 = mFilter->trimAndCut(or2, mOptions->trim.front2, mOptions->trim.tail2, frontTrimmed2);
+        Read* r1 = mFilter->trimAndCut(or1, 0, 0, frontTrimmed1);
+        Read* r2 = mFilter->trimAndCut(or2, 0, 0, frontTrimmed2);
 
         if(r1 != NULL && r2!=NULL) {
             if(mOptions->polyGTrim.enabled)
@@ -471,6 +471,11 @@ bool PairEndProcessor::processPairEnd(ReadPack* leftPack, ReadPack* rightPack, T
         if(r1 != NULL && r2!=NULL) {
             if(mOptions->polyXTrim.enabled)
                 PolyX::trimPolyX(r1, r2, config->getFilterResult(), mOptions->polyXTrim.minLen);
+        }
+
+        if(r1 != NULL && r2!=NULL) {
+            mFilter->cutOnly(r1, mOptions->trim.front1, mOptions->trim.tail1, frontTrimmed1);
+            mFilter->cutOnly(r2, mOptions->trim.front2, mOptions->trim.tail2, frontTrimmed2);
         }
 
         if(r1 != NULL && r2!=NULL) {

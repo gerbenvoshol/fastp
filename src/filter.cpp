@@ -221,6 +221,29 @@ Read* Filter::trimAndCut(Read* r, int front, int tail, int& frontTrimmed) {
     return r;
 }
 
+Read* Filter::cutOnly(Read* r, int front, int tail, int& frontTrimmed) {
+    frontTrimmed = 0;
+    // return the same read for speed if no change needed
+    if(front == 0 && tail == 0)
+        return r;
+
+    int rlen = r->length() - front - tail ; 
+    if (rlen < 0)
+        return NULL;
+
+    if(front == 0){
+        r->resize(rlen);
+        return r;
+    }
+
+    r->mSeq->erase(0,front);
+    r->mSeq->resize(rlen);
+    r->mQuality->erase(0,front);
+    r->mQuality->resize(rlen);
+    frontTrimmed = front;
+    return r;
+}
+
 bool Filter::filterByIndex(Read* r) {
     if(mOptions->indexFilter.enabled) {
         if( match(mOptions->indexFilter.blacklist1, r->firstIndex(), mOptions->indexFilter.threshold) )
