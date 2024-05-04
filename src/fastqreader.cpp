@@ -342,7 +342,8 @@ Read* FastqReader::read(){
 	if (name->empty() || (*name)[0]!='@') {
 		cerr << *name << endl;
 		error_exit("Read name line should start with '@'");
-
+	}
+	
 	getLine(sequence);
 	getLine(strand);
 	getLine(quality);
